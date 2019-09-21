@@ -32,18 +32,26 @@ const backFacesGenerator = (array) => {
 	})
 }
 
+
+
 const board = (() => {
 	//shuffle goes here
-	let backFaces = backFacesGenerator(cardsData); 
-	let flipedCard = false; 		//To check if the board already have a first flipped card
-	let locked = false;					//To check if the board already have 2 flipped cards
-	let selectedCards = []; 		//Store 1st and 2nd selected cards
-	let cards = document.querySelectorAll('.card');
+	let backFaces
+	let flipedCard		//To check if the board already have a first flipped card
+	let locked				//To check if the board already have 2 flipped cards
+	let selectedCards 		//Store 1st and 2nd selected cards
+	let cards
 
 	const gameInit = () => {
+		cards = document.querySelectorAll('.card');
 		cards.forEach(card => {
+			card.classList.remove('fliped', 'matched');
 			card.addEventListener('click', cardClickHandler);
 		});
+		backFaces = backFacesGenerator(cardsData);
+		locked = false;
+		flipedCard = false;
+		selectedCards = [];
 	};
 
 	const setFirstCard = (index) => {selectedCards[0] = index};
@@ -134,6 +142,11 @@ const cardClickHandler = (event) => {
 	board.isMatch() ? board.validateMatch() : setTimeout(() => {board.hideCards(); board.toggleLock();}, 1500);
 }
 
+const gameReset = () => {
+	let confirmation = confirm("Do you really want to reset the game?");
+	if (!confirmation) return;
+	board.gameInit();
+}
 
 board.gameInit();
 
