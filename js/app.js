@@ -34,10 +34,10 @@ const backFacesGenerator = (array) => {
 
 const board = (() => {
 	//shuffle goes here
-	let backFaces = backFacesGenerator(cardsData);
-	let flipedCard = false;
-	let locked = false;
-	let selectedCards = [];
+	let backFaces = backFacesGenerator(cardsData); 
+	let flipedCard = false; 		//To check if the board already have a first flipped card
+	let locked = false;					//To check if the board already have 2 flipped cards
+	let selectedCards = []; 		//Store 1st and 2nd selected cards
 	let cards = document.querySelectorAll('.card');
 
 	const gameInit = () => {
@@ -46,19 +46,15 @@ const board = (() => {
 		});
 	};
 
-	const setFirstCard = (index) => {
-		selectedCards[0] = index;
-	}
+	const setFirstCard = (index) => {selectedCards[0] = index}
 
-	const setSecondCard = (index) => {
-		selectedCards[1] = index;
-	}
+	const setSecondCard = (index) => {selectedCards[1] = index}
 	
-	const toggleFlipedCard = () => {
-		flipedCard = !flipedCard;
-	}
+	const toggleFlipedCard = () => {flipedCard = !flipedCard}
 
-	const hasFlipedCard = () => flipedCard;	
+	const hasFlipedCard = () => flipedCard;
+	
+	const getSelectedIndexs = () => selectedCards;
 
 	const flipCard = card => {
 		let index = +card.dataset.index;
@@ -67,9 +63,10 @@ const board = (() => {
 		toggleFlipedCard();
 	};
 
-	const getSelectedIndexs = () => selectedCards;
+	
 
 	const hideCards = () => {
+		//Hide both stored cards by flipping it over and removingt the back face.
 		selectedCards.forEach(card => {
 			let backFace = card.querySelector('.back');
 			card.classList.remove('fliped');
@@ -92,14 +89,14 @@ const board = (() => {
 const cardClickHandler = (event) => {
 	let selectedCard = event.currentTarget;
 	
-	if (!board.hasFlipedCard()) {
-		board.setFirstCard(selectedCard);
-		board.flipCard(selectedCard);
-		return;
+	if (!board.hasFlipedCard()) {							//check if the board already have 1st card flipped
+		board.setFirstCard(selectedCard);				//Store the first selected card
+		board.flipCard(selectedCard);						//Flipping the first card
+		return;																	
 	}
 
-	board.setSecondCard(selectedCard);
-	board.flipCard(selectedCard);
+	board.setSecondCard(selectedCard);				//If already have a card flipped, it store the second card
+	board.flipCard(selectedCard);							//Flipping the second card;
 	
 	setTimeout(() => {
 		board.hideCards();
