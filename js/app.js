@@ -35,32 +35,69 @@ const backFacesGenerator = (array) => {
 const board = (() => {
 	//shuffle goes here
 	let backFaces = backFacesGenerator(cardsData);
-	let hasFlipedCard = false;
+	let flipedCard = false;
 	let locked = false;
+	let selectedIndexs = []
 	let cards = document.querySelectorAll('.card');
 
 	const gameInit = () => {
 		cards.forEach(card => {
 			card.addEventListener('click', cardClickHandler);
 		});
+	};
+
+	const setFirstIndex = (index) => {
+		selectedIndexs[0] = index;
 	}
+
+	const setSecondIndex = (index) => {
+		selectedIndexs[1] = index;
+	}
+	
+	const toggleFlipedCard = () => {
+		flipedCard = !flipedCard;
+	}
+
+	const hasFlipedCard = () => flipedCard;	
 
 	const flipCard = card => {
 		let index = +card.dataset.index;
 		card.appendChild(backFaces[index].content);
 		card.classList.add('fliped');
+		toggleFlipedCard();
 	};
 
+	const getSelectedIndexs = () => selectedIndexs;
+
+	
 
 	return {
 		gameInit,
 		flipCard,
+		setFirstIndex,
+		setSecondIndex,
+		hasFlipedCard,
+		getSelectedIndexs
 	}
 })();
 
+
 const cardClickHandler = (event) => {
-	let clickedCard = event.currentTarget;
-	board.flipCard(clickedCard);
+	let selectedCard = event.currentTarget;
+	
+	if (!board.hasFlipedCard()) {
+
+		board.setFirstIndex(+selectedCard.dataset.index);
+
+	} else {
+
+		board.setSecondIndex(+selectedCard.dataset.index);
+	
+	}
+	
+	board.flipCard(selectedCard)
+
+	console.log(board.getSelectedIndexs());
 }
 
 
