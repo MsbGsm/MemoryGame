@@ -20,12 +20,14 @@ body {
 .container {
   display: flex;
   height: 100vh;
-  background-color: lightblue; 
+  background-color: lightblue;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
 }
 
 .deck {
   display: flex;
-  margin: auto;
   background-color: lightgreen;
   width: 700px;
   height: 700px;
