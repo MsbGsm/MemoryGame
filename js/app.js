@@ -46,17 +46,17 @@ const board = (() => {
 		});
 	};
 
-	const setFirstCard = (index) => {selectedCards[0] = index}
+	const setFirstCard = (index) => {selectedCards[0] = index};
 
-	const setSecondCard = (index) => {selectedCards[1] = index}
+	const setSecondCard = (index) => {selectedCards[1] = index};
 	
-	const toggleFlipedCard = () => {flipedCard = !flipedCard}
+	const toggleFlipedCard = () => {flipedCard = !flipedCard};
 
 	const hasFlipedCard = () => flipedCard;
 	
 	const getSelectedCards = () => selectedCards;
 
-	const toggleLock = () => {locked =  !locked;}
+	const toggleLock = () => {locked =  !locked;};
 
 	const isLocked = () => locked;
 
@@ -74,7 +74,24 @@ const board = (() => {
 			card.classList.remove('fliped');
 			setTimeout(()=> backFace.remove(), 300);			//BugFix: prevent the back face being removed before the flip over ends.
 		});
+	};
+		
+	const isMatch = () => {
+		let firstDataIndex = +selectedCards[0].dataset.index;
+		let secondDataIndex = +selectedCards[1].dataset.index;
+		return backFaces[firstDataIndex].data === backFaces[secondDataIndex].data;
+	};
+
+	const validateMatch = () => {
+		selectedCards.forEach(card =>{
+			card.classList.add('matched');
+			card.classList.remove('fliped');
+			card.removeEventListener('click', cardClickHandler);
+		});
+		selectedCards = [];
+		toggleLock();
 	}
+
 
 	return {
 		gameInit,
@@ -85,7 +102,9 @@ const board = (() => {
 		getSelectedCards,
 		hideCards,
 		toggleLock,
-		isLocked
+		isLocked,
+		isMatch,
+		validateMatch
 	}
 })();
 
@@ -111,10 +130,8 @@ const cardClickHandler = (event) => {
 
 	board.toggleLock();
 	
-	setTimeout(() => {
-		board.hideCards();
-		board.toggleLock();
-	}, 1500)
+	
+	board.isMatch() ? board.validateMatch() : setTimeout(() => {board.hideCards(); board.toggleLock();}, 1500);
 }
 
 
