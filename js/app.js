@@ -37,7 +37,7 @@ const board = (() => {
 	let backFaces = backFacesGenerator(cardsData);
 	let flipedCard = false;
 	let locked = false;
-	let selectedIndexs = []
+	let selectedCards = [];
 	let cards = document.querySelectorAll('.card');
 
 	const gameInit = () => {
@@ -46,12 +46,12 @@ const board = (() => {
 		});
 	};
 
-	const setFirstIndex = (index) => {
-		selectedIndexs[0] = index;
+	const setFirstCard = (index) => {
+		selectedCards[0] = index;
 	}
 
-	const setSecondIndex = (index) => {
-		selectedIndexs[1] = index;
+	const setSecondCard = (index) => {
+		selectedCards[1] = index;
 	}
 	
 	const toggleFlipedCard = () => {
@@ -67,17 +67,24 @@ const board = (() => {
 		toggleFlipedCard();
 	};
 
-	const getSelectedIndexs = () => selectedIndexs;
+	const getSelectedIndexs = () => selectedCards;
 
-	
+	const hideCards = () => {
+		selectedCards.forEach(card => {
+			let backFace = card.querySelector('.back');
+			card.classList.remove('fliped');
+			backFace.remove();
+		});
+	}
 
 	return {
 		gameInit,
 		flipCard,
-		setFirstIndex,
-		setSecondIndex,
+		setFirstCard,
+		setSecondCard,
 		hasFlipedCard,
-		getSelectedIndexs
+		getSelectedIndexs,
+		hideCards
 	}
 })();
 
@@ -86,18 +93,17 @@ const cardClickHandler = (event) => {
 	let selectedCard = event.currentTarget;
 	
 	if (!board.hasFlipedCard()) {
-
-		board.setFirstIndex(+selectedCard.dataset.index);
-
-	} else {
-
-		board.setSecondIndex(+selectedCard.dataset.index);
-	
+		board.setFirstCard(selectedCard);
+		board.flipCard(selectedCard);
+		return;
 	}
-	
-	board.flipCard(selectedCard)
 
-	console.log(board.getSelectedIndexs());
+	board.setSecondCard(selectedCard);
+	board.flipCard(selectedCard);
+	
+	setTimeout(() => {
+		board.hideCards();
+	}, 1500)
 }
 
 
