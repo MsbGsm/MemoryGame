@@ -70,7 +70,7 @@ const board = (() => {
 		selectedCards.forEach(card => {
 			let backFace = card.querySelector('.back');
 			card.classList.remove('fliped');
-			backFace.remove();
+			setTimeout(()=> backFace.remove(), 500);
 		});
 	}
 
@@ -84,6 +84,7 @@ const board = (() => {
 		hideCards
 	}
 })();
+
 
 
 const cardClickHandler = (event) => {
