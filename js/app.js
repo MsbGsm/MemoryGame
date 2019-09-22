@@ -105,7 +105,9 @@ const board = (() => {
 		
 		});
 		matchCounter += 1;
-		if (matchCounter >= 8) console.log('Game Completed!');
+		if (matchCounter >= 8) {
+			congratsModal.open();
+		}
 		selectedCards = [];
 		toggleLock();
 	}
@@ -159,10 +161,43 @@ const gameReset = () => {
 	board.gameInit();
 }
 
+
+
 board.gameInit();
 
 
 
+const modal = document.querySelector('#congratsModal');
+const modalRepalyBtn = document.querySelector('.modal-footer #replay-btn');
+const xBtn = document.querySelector('span.modal-close');
 
+xBtn.onclick = () => {
+	congratsModal.close();
+}
 
+window.onclick = (event) => {
+	if (event.target === modal) {
+		congratsModal.close();
+	}
+}
+
+modalRepalyBtn.onclick = () => {
+	board.gameInit();
+	congratsModal.close();
+};
+
+const congratsModal = (() => {
+	const close = () => {
+		modal.style.display = 'none';
+	};
+
+	const open = () => {
+		modal.style.display = 'block';
+	}
+
+	return {
+		open,
+		close
+	}
+})();
 
