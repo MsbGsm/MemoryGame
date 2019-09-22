@@ -24,7 +24,7 @@ const backFacesGenerator = (array) => {
 		backEl.className = 'back';
 		contentEl.className = data;
 		backEl.appendChild(contentEl);
-		
+
 		return {
 			data,
 			content: backEl
@@ -41,6 +41,8 @@ const board = (() => {
 	let locked				//To check if the board already have 2 flipped cards
 	let selectedCards 		//Store 1st and 2nd selected cards
 	let cards
+	let movesCounter;
+	let matchCounter;
 
 	const gameInit = () => {
 		cards = document.querySelectorAll('.card');
@@ -52,19 +54,22 @@ const board = (() => {
 		locked = false;
 		flipedCard = false;
 		selectedCards = [];
+		movesCounter = 0;
+		counterOutput.innerText = 0;
+		matchCounter = 0;
 	};
 
-	const setFirstCard = (index) => {selectedCards[0] = index};
+	const setFirstCard = (index) => { selectedCards[0] = index };
 
-	const setSecondCard = (index) => {selectedCards[1] = index};
-	
-	const toggleFlipedCard = () => {flipedCard = !flipedCard};
+	const setSecondCard = (index) => { selectedCards[1] = index };
+
+	const toggleFlipedCard = () => { flipedCard = !flipedCard };
 
 	const hasFlipedCard = () => flipedCard;
-	
+
 	const getSelectedCards = () => selectedCards;
 
-	const toggleLock = () => {locked =  !locked;};
+	const toggleLock = () => { locked = !locked; };
 
 	const isLocked = () => locked;
 
@@ -80,22 +85,27 @@ const board = (() => {
 		selectedCards.forEach(card => {
 			let backFace = card.querySelector('.back');
 			card.classList.remove('fliped');
-			setTimeout(()=> backFace.remove(), 300);			//BugFix: prevent the back face being removed before the flip over ends.
+			setTimeout(() => backFace.remove(), 300);			//BugFix: prevent the back face being removed before the flip over ends.
 		});
 	};
-		
+
 	const isMatch = () => {
 		let firstDataIndex = +selectedCards[0].dataset.index;
 		let secondDataIndex = +selectedCards[1].dataset.index;
+		movesCounter += 1;
+		counterOutput.innerText = movesCounter;
 		return backFaces[firstDataIndex].data === backFaces[secondDataIndex].data;
 	};
 
 	const validateMatch = () => {
-		selectedCards.forEach(card =>{
+		selectedCards.forEach(card => {
 			card.classList.add('matched');
 			card.classList.remove('fliped');
 			card.removeEventListener('click', cardClickHandler);
+		
 		});
+		matchCounter += 1;
+		if (matchCounter >= 8) console.log('Game Completed!');
 		selectedCards = [];
 		toggleLock();
 	}
@@ -116,6 +126,7 @@ const board = (() => {
 	}
 })();
 
+let counterOutput = document.querySelector('span[data-counter]');
 
 
 const cardClickHandler = (event) => {
@@ -129,7 +140,7 @@ const cardClickHandler = (event) => {
 
 		board.setFirstCard(selectedCard);				//Store the first selected card
 		board.flipCard(selectedCard);						//Flipping the first card
-		return;																	
+		return;
 	}
 
 	board.setSecondCard(selectedCard);				//If already have a card flipped, it store the second card
@@ -137,9 +148,9 @@ const cardClickHandler = (event) => {
 	board.flipCard(selectedCard);							//Flipping the second card;
 
 	board.toggleLock();
-	
-	
-	board.isMatch() ? board.validateMatch() : setTimeout(() => {board.hideCards(); board.toggleLock();}, 1500);
+
+
+	board.isMatch() ? board.validateMatch() : setTimeout(() => { board.hideCards(); board.toggleLock(); }, 1500);
 }
 
 const gameReset = () => {

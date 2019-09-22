@@ -26,6 +26,16 @@ body {
   justify-content: center; 
 }
 
+.score-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 1em;
+  font-size: 1.5rem;
+}
+
 .deck {
   display: flex;
   background-color: lightgreen;
