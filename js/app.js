@@ -85,7 +85,7 @@ const board = (() => {
 		selectedCards.forEach(card => {
 			let backFace = card.querySelector('.back');
 			card.classList.remove('fliped');
-			setTimeout(() => backFace.remove(), 300);			//BugFix: prevent the back face being removed before the flip over ends.
+			setTimeout(() => {backFace.remove()}, 300);			//BugFix: prevent the back face being removed before the flip over ends.
 		});
 	};
 
