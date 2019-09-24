@@ -24,6 +24,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: start; 
+  background: rgb(11,5,112);
+  background: linear-gradient(27deg, rgba(11,5,112,1) 0%, rgba(0,212,255,1) 100%);
+  color: #f4f5f7
 }
 
 .score-panel {
@@ -34,6 +37,7 @@ body {
   justify-content: space-evenly;
   padding: 10px;
   font-size: 1.5em;
+  font-weight: bold;
 }
 
 .deck {
@@ -50,7 +54,7 @@ body {
   padding: 25px;
   border-radius: 10px;
   box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
-
+  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(245,117,143,1) 100%);
   
 }
 
@@ -63,7 +67,7 @@ body {
   border-radius: 8px;
   box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
   transform-style: preserve-3d;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
   font-size: 4em;
 
 }
@@ -182,6 +186,7 @@ body {
   padding: 2px 16px;
   background-color: #5cb85c;
   color: white;
+  background: linear-gradient(27deg, rgba(11,5,112,1) 0%, rgba(131,228,144,1) 100%);
 }
 
 .modal-body {padding: 2px 16px;}
@@ -190,4 +195,5 @@ body {
   padding: 2px 16px;
   background-color: #5cb85c;
   color: white;
+  background: linear-gradient(27deg, rgba(11,5,112,1) 0%, rgba(131,228,144,1) 100%);
 }
