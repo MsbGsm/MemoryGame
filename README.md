@@ -4,6 +4,8 @@
 Memory Game project created as a task to join Chingu's 12th voyage, it have been required as 2nd Tier prework to demonstrate mastery of 
 the core web development skills - HTML, CSS, and JavaScript [More Details](https://chingu.gitbook.io/chingu-voyage-handbook/cohort-guide/pre-work/task-4-solo-project-for-new-chingus).
 
+You can test it [here](https://msbgsm.github.io/MemoryGame/)
+
 
 ## About the code
 By checking the same game from others, i found that the player can cheat and check html by the developer tools and use that to complete the game in less possible moves,
