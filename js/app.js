@@ -1,203 +1,225 @@
-'use strict';
+let Deck = (() => {
 
+	const DATA = [
+		'fas fa-gem',
+		'fas fa-paper-plane',
+		'fa fa-anchor',
+		'fa fa-bolt',
+		'fa fa-cube',
+		'fa fa-leaf',
+		'fa fa-bicycle',
+		'fa fa-bomb'
+	];
 
-let data = [
-	'fas fa-gem',
-	'fas fa-paper-plane',
-	'fa fa-anchor',
-	'fa fa-bolt',
-	'fa fa-cube',
-	'fa fa-leaf',
-	'fa fa-bicycle',
-	'fa fa-bomb',
-];
+	let deckData;
 
-// Duplicating data
-let cardsData = data.reduce((res, current) => res.concat([current, current]), []);
-
-// This will generate BackFaces objects containing data proprety that we used to check card match
-// and content property that contain cards back face node elements that we need to add to the dom later.
-const backFacesGenerator = (array) => {
-	return array.map(data => {
-		let backEl = document.createElement('div');
-		let contentEl = document.createElement('i');
-		backEl.className = 'back';
-		contentEl.className = data;
-		backEl.appendChild(contentEl);
+	const backFaceObjectGenerator = (cardData) => {
+		let backFaceElement = document.createElement('div');
+		let contentElement = document.createElement('i');
+		backFaceElement.className = 'back';
+		contentElement.className = cardData;
+		backFaceElement.appendChild(contentElement);
 
 		return {
-			data,
-			content: backEl
+			cardData,
+			backFaceElement
 		};
-	})
-}
+	}
+
+	const duplicateDataArr = (arr) => arr.reduce((res, current) => res.concat(current, current), [])
+	
+
+	const init = () => {
+		deckData = duplicateDataArr(DATA);
+	}
+
+	const getCardData = index => {
+		return backFaceObjectGenerator(deckData[index]);
+	}
+	
+	return {
+		init,
+		getCardData
+	}	
+})();
 
 
 
-const board = (() => {
-	//shuffle goes here
-	let backFaces
-	let flipedCard		//To check if the board already have a first flipped card
-	let locked				//To check if the board already have 2 flipped cards
-	let selectedCards 		//Store 1st and 2nd selected cards
-	let cards
+
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+let gameUI = (() => {
+	let uiCards = [...document.querySelectorAll('.card')];
+
+	let movesCounterElement = document.querySelector("span#moves-counter");
+
+	const cardClickHandler = (event) => {
+		gameController.selectCard(event.currentTarget);
+	}
+
+	const init = () => {
+		uiCards.forEach(uiCard => {
+			uiCard.classList.remove('matched', 'fliped');
+			uiCard.addEventListener('click', cardClickHandler);
+		});
+
+		movesCounterElement.innerText = 0;
+	}
+
+
+	const flipCard = ({index, backFaceElement}) => {
+		uiCard = uiCards.filter(card => card.dataset.index == index )[0];
+		uiCard.appendChild(backFaceElement);
+		uiCard.classList.add('fliped');
+	}
+
+
+
+	const hideCards = (cardsObjArr) => {
+		cardsObjArr.forEach(cardObj => {
+			let {index} = cardObj;
+			let card = uiCards.filter(card => card.dataset.index == index )[0];
+			let backFace = card.querySelector('.back');
+			card.classList.remove('fliped');
+			setTimeout(() => {
+				backFace.remove();
+			}, 300);
+		});
+	}
+
+
+	const validateMatch = (cardsObjArr) => {
+		cardsObjArr.forEach(cardObj => {
+			let {index} = cardObj;
+			let card = uiCards.filter(card => card.dataset.index == index)[0];
+			
+			card.classList.remove('fliped');
+			card.classList.add('matched');
+			card.removeEventListener('click', cardClickHandler);
+		});
+	}
+
+	const updateMovesCounter = (movesCounter) => {
+		movesCounterElement.innerText = movesCounter;
+	}
+
+	return {
+		init,
+		flipCard,
+		hideCards,
+		validateMatch,
+		updateMovesCounter
+	}
+
+})();
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+let gameController = (() => {
+	
+	let selectedCards;
+	let hasFlipedCard;
+	let boardIsLocked;
 	let movesCounter;
 	let matchCounter;
 
-	const gameInit = () => {
-		cards = document.querySelectorAll('.card');
-		cards.forEach(card => {
-			card.classList.remove('fliped', 'matched');
-			card.addEventListener('click', cardClickHandler);
-		});
-		backFaces = backFacesGenerator(cardsData);
-		locked = false;
-		flipedCard = false;
+	
+	
+	
+	const wait = ms => new Promise((r, j)=>setTimeout(r, ms));
+
+	const init = () => {
 		selectedCards = [];
+		hasFlipedCard = false;
+		boardIsLocked = false;
 		movesCounter = 0;
-		counterOutput.innerText = 0;
 		matchCounter = 0;
-	};
+		Deck.init();
+		gameUI.init();
 
-	const setFirstCard = (index) => { selectedCards[0] = index };
 
-	const setSecondCard = (index) => { selectedCards[1] = index };
+	}
 
-	const toggleFlipedCard = () => { flipedCard = !flipedCard };
+	const setSelectedCardObject = (index) => {
+		let cardObject = Deck.getCardData(index);
+		cardObject.index = index;
+		return cardObject;
+	}
 
-	const hasFlipedCard = () => flipedCard;
-
-	const getSelectedCards = () => selectedCards;
-
-	const toggleLock = () => { locked = !locked; };
-
-	const isLocked = () => locked;
-
-	const flipCard = card => {
-		let index = +card.dataset.index;
-		card.appendChild(backFaces[index].content);
-		card.classList.add('fliped');
-		toggleFlipedCard();
-	};
-
-	const hideCards = () => {
-		//Hide both stored cards by flipping it over and removingt the back face.
-		selectedCards.forEach(card => {
-			let backFace = card.querySelector('.back');
-			card.classList.remove('fliped');
-			setTimeout(() => {backFace.remove()}, 300);			//BugFix: prevent the back face being removed before the flip over ends.
-		});
-	};
-
-	const isMatch = () => {
-		let firstDataIndex = +selectedCards[0].dataset.index;
-		let secondDataIndex = +selectedCards[1].dataset.index;
-		movesCounter += 1;
-		counterOutput.innerText = movesCounter;
-		return backFaces[firstDataIndex].data === backFaces[secondDataIndex].data;
-	};
-
-	const validateMatch = () => {
-		selectedCards.forEach(card => {
-			card.classList.add('matched');
-			card.classList.remove('fliped');
-			card.removeEventListener('click', cardClickHandler);
-		
-		});
-		matchCounter += 1;
-		if (matchCounter >= 8) {
-			congratsModal.open();
-		}
+	const resetSelection = () => {
 		selectedCards = [];
-		toggleLock();
+		hasFlipedCard = false;
+		boardIsLocked = false;
+	}
+
+	const isMatch = () => selectedCards[0].cardData === selectedCards[1].cardData;
+
+	const match = () => {
+		matchCounter += 1;
+		gameUI.validateMatch(selectedCards);
+		if (matchCounter >= 8) {
+			console.log('Game Completed Successfully!')
+		}
+		resetSelection();
+	}
+
+	const noMatch = async () => {
+		await wait(1500);
+		gameUI.hideCards(selectedCards);
+		resetSelection();
 	}
 
 
+	const selectCard = uiCard => {
+
+		let index = +uiCard.dataset.index;
+
+		if (selectedCards[0] && index === selectedCards[0].index) return;
+
+		if (boardIsLocked) return;
+
+		if (!hasFlipedCard) {
+			
+			selectedCards[0] = setSelectedCardObject(index);
+			gameUI.flipCard(selectedCards[0]);
+			hasFlipedCard = true;
+
+		} else {
+
+			selectedCards[1] = setSelectedCardObject(index);
+			gameUI.flipCard(selectedCards[1]);
+			hasFlipedCard = false;
+			boardIsLocked = true;
+			movesCounter += 1;
+			gameUI.updateMovesCounter(movesCounter);
+			isMatch() ? match() : noMatch();
+			
+		}
+	
+	}
+
 	return {
-		gameInit,
-		flipCard,
-		setFirstCard,
-		setSecondCard,
-		hasFlipedCard,
-		getSelectedCards,
-		hideCards,
-		toggleLock,
-		isLocked,
-		isMatch,
-		validateMatch
+		selectCard,
+		init
 	}
 })();
 
-let counterOutput = document.querySelector('span[data-counter]');
 
-
-const cardClickHandler = (event) => {
-	let selectedCard = event.currentTarget;
-
-	if (selectedCard === board.getSelectedCards()[0]) return;   // Test to prevent selecting the same card twice
-
-	if (board.isLocked()) return;							// test to prevent flipping more than 2 cards
-
-	if (!board.hasFlipedCard()) {							//check if the board already have 1st card flipped
-
-		board.setFirstCard(selectedCard);				//Store the first selected card
-		board.flipCard(selectedCard);						//Flipping the first card
-		return;
-	}
-
-	board.setSecondCard(selectedCard);				//If already have a card flipped, it store the second card
-
-	board.flipCard(selectedCard);							//Flipping the second card;
-
-	board.toggleLock();
-
-
-	board.isMatch() ? board.validateMatch() : setTimeout(() => { board.hideCards(); board.toggleLock(); }, 1500);
-}
 
 const gameReset = () => {
 	let confirmation = confirm("Do you really want to reset the game?");
 	if (!confirmation) return;
-	board.gameInit();
+	gameController.init();
 }
 
 
 
-board.gameInit();
-
-
-
-const modal = document.querySelector('#congratsModal');
-const modalRepalyBtn = document.querySelector('.modal-footer #replay-btn');
-const xBtn = document.querySelector('span.modal-close');
-
-xBtn.onclick = () => {
-	congratsModal.close();
-}
-
-window.onclick = (event) => {
-	if (event.target === modal) {
-		congratsModal.close();
-	}
-}
-
-modalRepalyBtn.onclick = () => {
-	board.gameInit();
-	congratsModal.close();
-};
-
-const congratsModal = (() => {
-	const close = () => {
-		modal.style.display = 'none';
-	};
-
-	const open = () => {
-		modal.style.display = 'block';
-	}
-
-	return {
-		open,
-		close
-	}
-})();
+gameController.init();
 
