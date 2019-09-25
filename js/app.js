@@ -1,7 +1,7 @@
 'use strict';
 
 (() => {
-	
+
 	let Deck = (() => {
 
 
@@ -367,17 +367,19 @@
 	
 	
 	
-	const gameReset = () => {
-		let confirmation = confirm("Do you really want to reset the game?");
-		if (!confirmation) return;
-		GameController.init();
-	}
 	
-	
+	const resetBtn = document.querySelector('#reset-btn');
 	const modal = document.querySelector('#congratsModal');
 	const modalRepalyBtn = document.querySelector('.modal-footer #replay-btn');
 	const xBtn = document.querySelector('span.modal-close');
 	
+
+	resetBtn.onclick = () => {
+		let confirmation = confirm("Do you really want to reset the game?");
+		if (!confirmation) return;
+		GameController.init();
+	}
+
 	xBtn.onclick = () => congratsModal.close();
 	
 	
