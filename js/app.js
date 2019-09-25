@@ -1,3 +1,5 @@
+'use strict';
+
 let Deck = (() => {
 
 
@@ -146,7 +148,7 @@ let GameUI = (() => {
 	 * @param {HTMLElement} cardObject.backFaceElement BackFaceElement property contain the backface element to be appended the the uiCard element
 	 */
 	const flipCard = ({index, backFaceElement}) => {
-		uiCard = uiCards.filter(card => card.dataset.index == index )[0];
+		let uiCard = uiCards.filter(card => +card.dataset.index === index )[0];
 		uiCard.appendChild(backFaceElement);
 		uiCard.classList.add('fliped');
 	}
@@ -161,7 +163,7 @@ let GameUI = (() => {
 	const hideCards = (cardsObjArr) => {
 		cardsObjArr.forEach(cardObj => {
 			let {index} = cardObj;
-			let card = uiCards.filter(card => card.dataset.index == index )[0];
+			let card = uiCards.filter(card => +card.dataset.index === index )[0];
 			let backFace = card.querySelector('.back');
 			card.classList.remove('fliped');
 			setTimeout(() => {
@@ -179,7 +181,7 @@ let GameUI = (() => {
 	const validateMatch = (cardsObjArr) => {
 		cardsObjArr.forEach(cardObj => {
 			let {index} = cardObj;
-			let card = uiCards.filter(card => card.dataset.index == index)[0];
+			let card = uiCards.filter(card => +card.dataset.index === index)[0];
 			
 			card.classList.remove('fliped');
 			card.classList.add('matched');
