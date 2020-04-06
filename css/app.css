@@ -59,7 +59,7 @@ body {
 }
 
 .card {
-  
+  perspective: 1500px;
   width: 23%;
   height: 23%;
   margin: 0;
@@ -83,6 +83,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  
 }
 
 .back {
